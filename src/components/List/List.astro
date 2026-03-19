@@ -1,0 +1,149 @@
+---
+import { db } from "../../assets/database";
+import { category } from "../../../drizzle/schema";
+import { asc } from "drizzle-orm";
+import ListContent from "./ListContent.astro";
+import { parseParams, type Config } from "./params";
+import { sortName } from "./sortStrategy";
+
+interface Props extends Config {}
+
+const {
+  categories: enabledCategories,
+  ageFrom,
+  ageTo,
+  sort,
+  size,
+  page,
+  sticky,
+} = parseParams(Astro.url, Astro.props);
+
+const categories = await db.query.category.findMany({
+  orderBy: asc(category.name),
+});
+---
+
+<div id="list">
+  <div class="controls">
+    <form
+      class:list={["form", { sticky }]}
+      hx-get=`/partials/list?sticky=${sticky}`
+      hx-target="#list-data"
+      hx-trigger="submit, change delay:300ms, input changed delay:1s"
+    >
+      <label>
+        {"Sort by: "}
+        <select name="sort">
+          {
+            Object.entries(sortName).map(([key, name]) => (
+              <option value={key} selected={key === sort}>
+                {name}
+              </option>
+            ))
+          }
+        </select>
+      </label>
+      <fieldset>
+        <legend> Age </legend>
+        <label>
+          {"From: "}
+          <input
+            type="number"
+            name="age-from"
+            value={ageFrom}
+            min="0"
+            max="100"
+            step="1"
+          />
+        </label>
+        {" "}
+        <label>
+          {"To: "}
+          <input
+            type="number"
+            name="age-to"
+            value={ageTo}
+            min="0"
+            max="100"
+            step="1"
+          />
+        </label>
+      </fieldset>
+      <fieldset>
+        <legend> Categories </legend>
+        {
+          categories.map((category) => (
+            <label>
+              <input
+                type="checkbox"
+                name="category"
+                value={category.id}
+                checked={
+                  enabledCategories.length === 0 ||
+                  enabledCategories?.includes(category.id)
+                }
+              />{" "}
+              {category.name}
+            </label>
+          ))
+        }
+      </fieldset>
+      <fieldset>
+        <legend> Paging </legend>
+        <label>
+          Size: <input
+            type="number"
+            name="size"
+            value={size}
+            min="1"
+            max={1000}
+            step="1"
+          />
+        </label>
+        {" "}
+        <label>
+          Number: <input
+            type="number"
+            name="page"
+            value={page}
+            min="1"
+            max={1000}
+            step="1"
+          />
+        </label>
+      </fieldset>
+      <button> Search </button>
+    </form>
+  </div>
+  <div id="list-data">
+    <ListContent {...Astro.props} />
+  </div>
+</div>
+
+<style>
+  #list {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1em;
+
+    .form {
+      border: 0.1em solid black;
+      border-radius: 0.7em;
+      padding: 1em;
+      accent-color: var(--color-tertiary);
+
+      & label:has(> input[name="category"]) {
+        display: block;
+      }
+
+      & button {
+        margin-top: 0.5em;
+      }
+
+      &.sticky {
+        position: sticky;
+        top: calc(var(--header-height) + var(--page-padding));
+      }
+    }
+  }
+</style>

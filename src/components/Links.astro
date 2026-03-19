@@ -1,0 +1,11 @@
+---
+import pages from "../assets/pages.json" with { type: "json" };
+---
+
+{
+  pages.map(([path, name]) => (
+    <li>
+      <a href={path}>{name}</a>
+    </li>
+  ))
+}

@@ -1,11 +1,17 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig, envField } from "astro/config";
 
-import node from '@astrojs/node';
+import node from "@astrojs/node";
 
 // https://astro.build/config
 export default defineConfig({
+  output: "server",
   adapter: node({
-    mode: 'standalone'
-  })
+    mode: "standalone",
+  }),
+  env: {
+    schema: {
+      DATABASE_URL: envField.string({ context: "server", access: "secret" }),
+    },
+  },
 });

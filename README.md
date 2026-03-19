@@ -1,46 +1,58 @@
-# Astro Starter Kit: Basics
+# Astro Test Site
+
+Requires:
+
+- NodeJS installed
+- A running copy of the database: https://github.com/FrameworkBenchFullStack-RepPack/database-seed
+
+## Build and run:
+
+Do this when you need to run the server for benchmarking purposes.
+
+Install dependencies:
 
 ```sh
-npm create astro@latest -- --template basics
+npm install-clean
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Build server:
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+```sh
+npm run build
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+Run server:
 
-## 🧞 Commands
+```sh
+DATABASE_URL=postgresql://USER:PASS@localhost:PORT/benchmark node ./dist/server/entry.mjs
+```
 
-All commands are run from the root of the project, from a terminal:
+When server is ready, it logs:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+```sh
+08.42.16 [@astrojs/node] Server listening on http://localhost:4321
+```
 
-## 👀 Want to learn more?
+More details: https://docs.astro.build/en/guides/integrations-guide/node/#standalone
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## Run test-server for development:
+
+Do this if you need a quick preview of the website, or are actively working on it.
+
+Install dependencies:
+
+```sh
+npm install
+```
+
+Add a `.env` file that points to the database:
+
+```
+DATABASE_URL=postgresql://benchmark:benchmark@localhost:5432/benchmark
+```
+
+Run the development server:
+
+```sh
+npm run dev
+```

@@ -9,14 +9,21 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@astrojs/node": "^10.0.2",
-    "astro": "^6.0.6"
+    "astro": "^6.0.6",
+    "drizzle-orm": "^0.45.1",
+    "htmx-ext-sse": "^2.2.4",
+    "htmx.org": "^2.0.8",
+    "pg": "^8.20.0"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
+    "@types/pg": "^8.18.0",
+    "drizzle-kit": "^0.31.10",
     "prettier": "^3.8.1",
     "prettier-plugin-astro": "^0.14.1"
   }

@@ -1,0 +1,87 @@
+---
+import { db } from "../../assets/database";
+import { category, person } from "../../../drizzle/schema";
+import { parseParams, type Config } from "./params";
+import { sortFunctions } from "./sortStrategy";
+import { and, eq, gte, inArray, lte, type SQLWrapper } from "drizzle-orm";
+
+interface Props extends Config {}
+
+const { categories, ageFrom, ageTo, sort, size, page, sticky } = parseParams(
+  Astro.url,
+  Astro.props,
+);
+
+const filters: SQLWrapper[] = [
+  gte(person.age, ageFrom),
+  lte(person.age, ageTo),
+];
+if (categories.length > 0) {
+  filters.push(inArray(person.categoryId, categories));
+}
+
+const persons = await db
+  .select()
+  .from(person)
+  .leftJoin(category, eq(person.categoryId, category.id))
+  .where(and(...filters))
+  .orderBy(sortFunctions[sort])
+  .limit(size)
+  .offset((page - 1) * size);
+---
+
+<table class:list={["table", { sticky }]}>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Age</th>
+      <th>Category</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      persons.map((person) => (
+        <tr>
+          <td>{person.person.name}</td>
+          <td>{person.person.age}</td>
+          <td>{person.category?.name}</td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>
+{
+  persons.length === 0 ? (
+    <p class="no-data-message">No entries matched the filter settings.</p>
+  ) : undefined
+}
+
+<style>
+  .table {
+    width: 100%;
+    text-align: center;
+    border-collapse: collapse;
+
+    & th {
+      font-weight: bolder;
+      background-color: var(--color-secondary);
+    }
+
+    & td,
+    & th {
+      border: 0.08em solid black;
+      height: 3.5em;
+    }
+
+    &.sticky {
+      & th {
+        top: var(--header-height);
+        position: sticky;
+      }
+    }
+  }
+
+  .no-data-message {
+    text-align: center;
+  }
+</style>
