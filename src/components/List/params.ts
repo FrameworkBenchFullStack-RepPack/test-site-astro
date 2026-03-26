@@ -8,21 +8,21 @@ export const filterDefaults = {
 };
 
 export const filterLimits = {
-  sort: { min: 1, max: 2_000_000 },
   ageFrom: { min: 0, max: 100 },
   ageTo: { min: 0, max: 100 },
+  category: { min: 1, max: 2_000_000 },
   size: { min: 1, max: 1_000 },
   page: { min: 1, max: 2_000_000 },
 };
 
 export interface Filters {
   sticky: boolean;
-  size: number;
-  page: number;
   sort: SortStrategy;
   ageFrom: number;
   ageTo: number;
   categories: number[];
+  size: number;
+  page: number;
 }
 
 export interface Config {
@@ -39,13 +39,11 @@ export function parseParams(
 
   const categories = params
     .getAll("category")
-    .map((id) => parseNum(id, filterLimits.sort, undefined))
+    .map((id) => parseNum(id, filterLimits.category, undefined))
     .filter((id) => id !== undefined);
 
   return {
     sticky: sticky ?? params.get("sticky") === "true",
-    size: parseNum(params.get("size"), filterLimits.size, size),
-    page: parseNum(params.get("page"), filterLimits.page, filterDefaults.page),
     sort: isSortStrategy(sortParam) ? sortParam : filterDefaults.sort,
     ageFrom: parseNum(
       params.get("age-from"),
@@ -58,6 +56,8 @@ export function parseParams(
       filterDefaults.ageTo,
     ),
     categories,
+    size: parseNum(params.get("size"), filterLimits.size, size),
+    page: parseNum(params.get("page"), filterLimits.page, filterDefaults.page),
   };
 }
 
