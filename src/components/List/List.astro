@@ -3,7 +3,7 @@ import { db } from "../../assets/database";
 import { category } from "../../../drizzle/schema";
 import { asc } from "drizzle-orm";
 import ListContent from "./ListContent.astro";
-import { parseParams, type Config } from "./params";
+import { filterLimits, parseParams, type Config } from "./params";
 import { sortName } from "./sortStrategy";
 
 interface Props extends Config {}
@@ -51,9 +51,9 @@ const categories = await db.query.category.findMany({
             type="number"
             name="age-from"
             value={ageFrom}
-            min="0"
-            max="100"
-            step="1"
+            min={filterLimits.ageFrom.min}
+            max={filterLimits.ageFrom.max}
+            step={1}
           />
         </label>
         {" "}
@@ -63,9 +63,9 @@ const categories = await db.query.category.findMany({
             type="number"
             name="age-to"
             value={ageTo}
-            min="0"
-            max="100"
-            step="1"
+            min={filterLimits.ageTo.min}
+            max={filterLimits.ageTo.max}
+            step={1}
           />
         </label>
       </fieldset>
@@ -95,8 +95,8 @@ const categories = await db.query.category.findMany({
             type="number"
             name="size"
             value={size}
-            min={1}
-            max={1000}
+            min={filterLimits.size.min}
+            max={filterLimits.size.max}
             step={1}
           />
         </label>
@@ -106,7 +106,8 @@ const categories = await db.query.category.findMany({
             type="number"
             name="page"
             value={page}
-            min={1}
+            min={filterLimits.page.min}
+            max={filterLimits.page.max}
             step={1}
           />
         </label>
