@@ -17,6 +17,7 @@ Astro.response.headers.set("Cache-Control", "public, max-age=3600");
     <title>Test site</title>
     <script>
       import "htmx.org";
+      import "htmx-ext-head-support";
       import "htmx-ext-sse";
 
       // Properly add submitted form element params to current URL
@@ -36,7 +37,7 @@ Astro.response.headers.set("Cache-Control", "public, max-age=3600");
       });
     </script>
   </head>
-  <body>
+  <body hx-boost="true" hx-ext="head-support">
     <slot />
     <footer>
       <div id="footer-content">
